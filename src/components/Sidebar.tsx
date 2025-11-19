@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +28,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useWorkspaceStore } from '@/lib/store/workspace-store';
 
 interface SidebarProps {
   currentWorkspace?: string;
@@ -38,8 +39,8 @@ interface SidebarProps {
 export function Sidebar({ currentWorkspace = "Personal", onWorkspaceChange, onLogout }: SidebarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreatePanelOpen, setIsCreatePanelOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const { isCollapsed, setCollapsed } = useWorkspaceStore();
 
   const families = [
     "The Smiths",
@@ -104,33 +105,14 @@ export function Sidebar({ currentWorkspace = "Personal", onWorkspaceChange, onLo
     }
   };
 
-  // Restore collapsed state from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = typeof window !== 'undefined' ? window.localStorage.getItem('sbd_sidebar_collapsed') : null;
-      if (saved === '1') setIsCollapsed(true);
-    } catch {
-      // ignore
-    }
-  }, []);
 
-  // Persist collapsed state
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('sbd_sidebar_collapsed', isCollapsed ? '1' : '0');
-      }
-    } catch {
-      // ignore
-    }
-  }, [isCollapsed]);
 
   return (
     <>
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "sticky top-0 h-screen flex flex-col bg-black/40 backdrop-blur-xl border-r border-white/10 transition-all duration-300 ease-in-out z-40",
+          "fixed left-0 top-0 bottom-0 flex flex-col bg-black/40 backdrop-blur-xl border-r border-white/10 transition-all duration-300 ease-in-out z-40",
           isCollapsed ? "w-20" : "w-72"
         )}
       >
@@ -313,7 +295,7 @@ export function Sidebar({ currentWorkspace = "Personal", onWorkspaceChange, onLo
 
         {/* Collapse Toggle */}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={() => setCollapsed(!isCollapsed)}
           className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0C0F16] border border-white/20 rounded-full flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-all shadow-lg z-50"
         >
           {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
@@ -346,7 +328,7 @@ export function Sidebar({ currentWorkspace = "Personal", onWorkspaceChange, onLo
 
                 onWorkspaceChange?.(name);
                 setIsCreatePanelOpen(false);
-                setIsCollapsed(false);
+                setCollapsed(false);
               }}
               className="p-6 space-y-6"
             >

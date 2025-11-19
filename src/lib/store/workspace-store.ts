@@ -4,7 +4,9 @@ import { persist } from 'zustand/middleware';
 interface WorkspaceStore {
     currentWorkspace: string;
     workspaceType: 'PERSONAL' | 'FAMILY' | 'TEAM';
+    isCollapsed: boolean;
     setWorkspace: (workspace: string) => void;
+    setCollapsed: (collapsed: boolean) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceStore>()(
@@ -12,6 +14,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
         (set) => ({
             currentWorkspace: 'Personal',
             workspaceType: 'PERSONAL',
+            isCollapsed: false,
             setWorkspace: (workspace) => {
                 let type: 'PERSONAL' | 'FAMILY' | 'TEAM' = 'PERSONAL';
                 if (workspace === 'Personal' || workspace === 'Me (Indie Mode)') type = 'PERSONAL';
@@ -20,6 +23,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
 
                 set({ currentWorkspace: workspace, workspaceType: type });
             },
+            setCollapsed: (collapsed) => set({ isCollapsed: collapsed }),
         }),
         {
             name: 'sbd-workspace-storage',

@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { currentWorkspace, setWorkspace } = useWorkspaceStore();
+    const { currentWorkspace, setWorkspace, isCollapsed } = useWorkspaceStore();
     const { user, logout, isAuthenticated } = useAuthStore();
     const router = useRouter();
 
@@ -22,14 +22,14 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#040508] via-[#0C0F16] to-[#040508] flex">
+        <div className="min-h-screen bg-gradient-to-br from-[#040508] via-[#0C0F16] to-[#040508]">
             <Sidebar
                 currentWorkspace={currentWorkspace}
                 onWorkspaceChange={setWorkspace}
                 onLogout={handleLogout}
             />
 
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className={`flex flex-col min-h-screen transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-72'}`}>
                 {/* Header */}
                 <header className="sticky top-0 z-30 bg-black/20 backdrop-blur-md border-b border-white/5 px-6 py-4">
                     <div className="flex items-center justify-between">
@@ -56,7 +56,7 @@ export default function DashboardLayout({
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 p-6 overflow-y-auto">
+                <main className="p-6 overflow-y-auto">
                     <div className="max-w-7xl mx-auto">
                         {children}
                     </div>

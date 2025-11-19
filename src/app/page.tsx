@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/components/header";
+import Navigation from "@/components/layout/Navigation";
 import Hero from "@/components/landing/Hero";
 import Architecture from "@/components/landing/Architecture";
 import Philosophy from "@/components/landing/Philosophy";
@@ -26,7 +26,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Header />
+      <Navigation />
 
       <main className="w-full">
         <Hero />

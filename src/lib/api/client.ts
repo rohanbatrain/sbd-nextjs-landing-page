@@ -28,7 +28,9 @@ const refreshAccessToken = async () => {
       throw new Error('No refresh token available');
     }
 
-    console.log('Attempting token refresh...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Attempting token refresh...');
+    }
 
     // Call refresh endpoint
     const response = await axios.post(
@@ -43,7 +45,9 @@ const refreshAccessToken = async () => {
 
     const { access_token, refresh_token: newRefreshToken } = response.data;
 
-    console.log('Token refreshed successfully');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Token refreshed successfully');
+    }
 
     // Update stored tokens in Zustand format
     parsed.state.accessToken = access_token;
@@ -142,13 +146,17 @@ apiClient.interceptors.response.use(
                                 originalRequest.url?.includes('/public');
 
         if (!isPublicPage && !isPublicEndpoint) {
-          console.log('Redirecting to login due to auth failure');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Redirecting to login due to auth failure');
+          }
           // Only redirect to login if not on a public page and not accessing a public endpoint
           if (typeof window !== 'undefined') {
             window.location.href = '/login';
           }
         } else {
-          console.log('On public page or accessing public endpoint, not redirecting to login');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('On public page or accessing public endpoint, not redirecting to login');
+          }
         }
 
         return Promise.reject(error);

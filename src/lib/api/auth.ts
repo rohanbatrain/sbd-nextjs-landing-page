@@ -144,7 +144,9 @@ function parseAuthError(error: unknown): AuthError {
 
   // Network errors
   if (((err as unknown) as { code?: string }).code === 'NETWORK_ERROR' || !err.response) {
-    console.log('🔍 Network error detected');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🔍 Network error detected');
+    }
     return {
       success: false,
       error: 'Connection Error',
@@ -155,7 +157,9 @@ function parseAuthError(error: unknown): AuthError {
   }
 
   // Generic error fallback
-  console.log('🔍 Generic error fallback - no response object');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔍 Generic error fallback - no response object');
+  }
   const fallbackResult: AuthError = {
     success: false,
     error: 'Authentication Error',

@@ -48,7 +48,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ error: null }); // Clear any previous errors
           const response = await loginApi(credentials, apiUrl);
-          console.log('Login response:', { user: response.user, hasTokens: !!response.access_token });
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Login response:', { user: response.user, hasTokens: !!response.access_token });
+          }
 
           set({
             user: response.user,
@@ -58,7 +60,9 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          console.log('Auth state updated, isAuthenticated:', true);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Auth state updated, isAuthenticated:', true);
+          }
         } catch (error) {
           console.error('Login failed in store:', {
             error: (error as AuthError)?.error,
@@ -76,7 +80,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ error: null }); // Clear any previous errors
           const response = await signupApi(credentials, apiUrl);
-          console.log('Signup response:', { hasTokens: !!response.access_token, isVerified: response.is_verified });
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Signup response:', { hasTokens: !!response.access_token, isVerified: response.is_verified });
+          }
 
           set({
             user: null, // User will be set after email verification
@@ -86,7 +92,9 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          console.log('Auth state updated after signup, isAuthenticated:', false);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Auth state updated after signup, isAuthenticated:', false);
+          }
         } catch (error) {
           console.error('Signup failed in store:', error);
           const authError = error as AuthError;

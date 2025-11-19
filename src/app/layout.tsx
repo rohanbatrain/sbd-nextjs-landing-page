@@ -2,6 +2,8 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { ApiInitializer } from "@/components/providers/api-initializer";
+import { ServerGuard } from "@/components/providers/server-guard";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -62,7 +64,12 @@ export default function RootLayout({
           </div>
 
           {/* Main Content */}
-          <div className="relative z-10">{children}</div>
+          <div className="relative z-10">
+            <ApiInitializer />
+            <ServerGuard>
+              {children}
+            </ServerGuard>
+          </div>
         </div>
       </body>
     </html>

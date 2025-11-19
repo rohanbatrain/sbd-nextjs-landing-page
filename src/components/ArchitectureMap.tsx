@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 import { motion } from "framer-motion";
-import { Maximize2, RefreshCcw, ZoomIn, ZoomOut, Download, Image } from "lucide-react";
+import { Maximize2, RefreshCcw, ZoomIn, ZoomOut, Download, Image as ImageIcon } from "lucide-react";
 
 // Initialize Mermaid globally once
 if (typeof window !== 'undefined') {
@@ -22,6 +22,7 @@ const ArchitectureMap: React.FC = () => {
   const mountedRef = useRef<boolean>(true);
   const abortControllerRef = useRef<AbortController | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const graphDefinition = `
     %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0f172a', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#3b82f6', 'lineColor': '#64748b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b'}}}%%
@@ -88,6 +89,9 @@ const ArchitectureMap: React.FC = () => {
   `;
 
   useEffect(() => {
+    // don't render until the component is visible (lazy load heavy work)
+    if (!isVisible) return;
+
     // create a unique id per render to avoid conflicts with existing DOM nodes
     const renderId = `sbd-architecture-${Date.now()}`;
 
@@ -116,10 +120,15 @@ const ArchitectureMap: React.FC = () => {
         if (mountedRef.current) {
           setSvgContent(svg);
           setIsLoaded(true);
+          // allow the computeFitScale to run shortly after render
+          setTimeout(() => computeFitScale(), 60);
         }
-      } catch (error) {
+      } catch (err) {
         if (signal.aborted) return;
-        console.error("Mermaid render error:", error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Mermaid render error:', err);
+        }
+        // render a simple error fallback for users
         if (mountedRef.current) {
           setSvgContent('<pre class="text-xs text-red-400">Failed to render diagram</pre>');
         }
@@ -135,7 +144,23 @@ const ArchitectureMap: React.FC = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [graphDefinition]);
+  }, [graphDefinition, isVisible]);
+
+  // IntersectionObserver: mark visible so we can lazy-load Mermaid
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          obs.disconnect();
+        }
+      });
+    }, { root: null, rootMargin: '400px', threshold: 0.05 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   // compute scale to fit the wrapper
   const computeFitScale = () => {
@@ -337,7 +362,7 @@ const ArchitectureMap: React.FC = () => {
             onClick={exportPng}
             className="p-2 bg-slate-800/50 hover:bg-slate-700 text-slate-300 rounded-lg backdrop-blur-sm transition-colors"
           >
-            <Image size={16} />
+            <ImageIcon size={16} aria-hidden="true" />
           </button>
         </div>
 

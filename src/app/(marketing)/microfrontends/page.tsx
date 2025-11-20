@@ -18,8 +18,8 @@ import {
   Globe,
   Database
 } from 'lucide-react';
-import Header from '@/components/components/header';
-import Footer from '@/components/components/footer';
+
+
 import Ribbon from '@/components/ui/ribbon';
 
 interface Microfrontend {
@@ -110,8 +110,8 @@ export default function MicrofrontendsPage() {
   const filteredMicrofrontends = useMemo(() => {
     return microfrontends.filter(mf => {
       const matchesSearch = mf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           mf.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           mf.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
+        mf.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        mf.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
 
       const matchesFramework = selectedFramework === 'all' || mf.framework === selectedFramework;
 
@@ -133,9 +133,7 @@ export default function MicrofrontendsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#040508] via-[#0C0F15] to-[#040508] p-4">
-      <div className="w-full flex justify-center pb-8">
-        <Header />
-      </div>
+
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -363,8 +361,8 @@ export default function MicrofrontendsPage() {
             </div>
           </div>
         </motion.div>
-        </div>
-      <Footer />
+      </div>
+
     </div>
   );
 }

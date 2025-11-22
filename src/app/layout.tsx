@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ApiInitializer } from "@/components/providers/api-initializer";
 import { ServerGuard } from "@/components/providers/server-guard";
+import { TenantProvider } from "@/contexts/TenantContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,7 +27,9 @@ export default function RootLayout({
       <body className={`${poppins.className} min-h-screen`}>
         <ApiInitializer />
         <ServerGuard>
-          {children}
+          <TenantProvider>
+            {children}
+          </TenantProvider>
         </ServerGuard>
       </body>
     </html>

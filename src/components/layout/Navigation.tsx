@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, Menu, X, Github } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { TenantSwitcher } from "@/components/TenantSwitcher";
 
 const navigation = {
     features: [
@@ -83,6 +84,9 @@ export default function Navigation() {
                         <Link href="/community" className="text-white/80 hover:text-white transition-colors">
                             Community
                         </Link>
+
+                        {/* Tenant Switcher */}
+                        <TenantSwitcher />
 
                         <a
                             href="https://github.com/rohanbatrain/second_brain_database"
